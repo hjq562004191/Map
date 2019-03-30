@@ -1,26 +1,34 @@
 package com.map.domain;
 
 public class PhoneNumber {
-    private int id;
-    private String phonenumber;
+    private String mobilePhoneNumber;
+    private String template;
+
+    public String getMobilePhoneNumber() {
+        return mobilePhoneNumber;
+    }
+
+    public void setMobilePhoneNumber(String mobilePhoneNumber) {
+        this.mobilePhoneNumber = mobilePhoneNumber;
+    }
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(String template) {
+        this.template = template;
+    }
 
     public PhoneNumber(String phonenumber) {
-        this.phonenumber = phonenumber;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+        this.mobilePhoneNumber = phonenumber;
     }
 
     public String getPhonenumber() {
-        return phonenumber;
+        return mobilePhoneNumber;
     }
 
     public void setPhonenumber(String phonenumber) {
-        this.phonenumber = phonenumber;
+        this.mobilePhoneNumber = phonenumber;
     }
 }

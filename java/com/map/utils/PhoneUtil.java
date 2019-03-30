@@ -9,6 +9,8 @@ import okhttp3.*;
 import java.io.IOException;
 
 public class PhoneUtil {
+    private static String ApplicationId = "c5732f86cfe1bddf3308e71eb0ec7b96";
+    private static String RestApiKey = "da63f56e12c97ad9c6ede545604f3a4a";
     private final static ObjectMapper MAPPER = new ObjectMapper();
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -22,7 +24,7 @@ public class PhoneUtil {
         String url = "https://api2.bmob.cn/1/requestSmsCode";
         OkHttpClient client = new OkHttpClient();
 
-        PhoneRequest phoneRequest = new PhoneRequest(phoneNumber,"test");
+        PhoneRequest phoneRequest = new PhoneRequest(phoneNumber,"djsEnglish");
 
 
         Gson gson = new Gson();
@@ -33,8 +35,8 @@ public class PhoneUtil {
 
         Request request = new Request.Builder()
                 .url(url)
-                .addHeader("X-Bmob-Application-Id","cca391cbd54b83388eadfe2a5ba106ae")
-                .addHeader("X-Bmob-REST-API-Key","9487c81d00da33630dba77c48f516c32")
+                .addHeader("X-Bmob-Application-Id",ApplicationId)
+                .addHeader("X-Bmob-REST-API-Key",RestApiKey)
                 .addHeader("Content-Type","application/json")
                 .post(jsonBody)
                 .build();
@@ -79,8 +81,8 @@ public class PhoneUtil {
 
         Request request = new Request.Builder()
                 .url(url)
-                .addHeader("X-Bmob-Application-Id","cca391cbd54b83388eadfe2a5ba106ae")
-                .addHeader("X-Bmob-REST-API-Key","9487c81d00da33630dba77c48f516c32")
+                .addHeader("X-Bmob-Application-Id",ApplicationId)
+                .addHeader("X-Bmob-REST-API-Key",RestApiKey)
                 .addHeader("Content-Type","application/json")
                 .post(jsonBody)
                 .build();
@@ -124,12 +126,12 @@ public class PhoneUtil {
     }
 
     private static class PhoneRequest {
-        private String  PhoneNumber;
-        private String name;
+        private String  mobilePhoneNumber;
+        private String template;
 
-        public PhoneRequest(String phoneNumber, String name) {
-            PhoneNumber = phoneNumber;
-            this.name = name;
+        public PhoneRequest(String mobilePhoneNumber, String template) {
+            this.mobilePhoneNumber = mobilePhoneNumber;
+            this.template = template;
         }
     }
 }

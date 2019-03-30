@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.github.pagehelper.PageInfo;
 import com.map.domain.User;
 import com.map.utils.JWTUtils;
+import com.map.utils.PhoneUtil;
 import com.map.web.View.DetialView;
 import com.map.web.View.SimpleView;
 import com.map.web.model.ResultBuilder;
@@ -32,6 +33,24 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @RequestMapping(value = "/user/getphonecode",method = POST)
+    public  ResultModel getphonecode(String phonenumber) {
+        String code = null;
+        code = PhoneUtil.getVerificationCode(phonenumber);
+        if (code == null){
+            return ResultBuilder.getFailure(-1, "验证码发送失败!");
+        }
+        return ResultBuilder.getSuccess(code,"获取成功!");
+    }
+
+    @RequestMapping(value = "/user/judgephone",method = POST)
+    public  ResultModel phoneNumberJudge(String code,String phonenumber){
+        if (PhoneUtil.judgeCodeIsTrue(code,phonenumber)){
+            return ResultBuilder.getSuccess("验证成功!");
+        }
+        return ResultBuilder.getFailure(-1,"验证失败!");
+    }
 
     @RequestMapping(value = "/user/register", method = POST)
     public ResultModel register(@Valid User user, BindingResult bindingResult) {

@@ -17,7 +17,7 @@ public class JWTUtils {
     /**
      * 公钥
      */
-    private static String SECRET = "woxin";
+    private static String SECRET = "qiang";
     public static String createToken(int id, String username,
                                       String type) throws Exception {
         // 签发时间

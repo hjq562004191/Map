@@ -1,6 +1,6 @@
 package com.map.mapper;
 
-import com.map.domain.itemsPhoto;
+
 import com.map.web.model.ItemsModel;
 import org.apache.ibatis.annotations.*;
 

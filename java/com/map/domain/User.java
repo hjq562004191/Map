@@ -34,6 +34,8 @@ public class User implements Serializable {
 
     private int isLock = 0;
 
+    private int phonenumber;
+
     public User() {
     }
 
@@ -106,6 +108,14 @@ public class User implements Serializable {
         this.isLock = isLock;
     }
 
+    public int getPhoneNumber() {
+        return phonenumber;
+    }
+
+    public void setPhoneNumber(int phoneNumber) {
+        this.phonenumber = phoneNumber;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -115,6 +125,7 @@ public class User implements Serializable {
                 ", password='" + password + '\'' +
                 ", image='" + image + '\'' +
                 ", type='" + type + '\'' +
+                ", phonenumber='" + phonenumber + '\'' +
                 '}';
     }
 }
