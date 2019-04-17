@@ -2,8 +2,10 @@ package com.map.web.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.map.domain.ChangePassword;
 import com.map.domain.User;
 import com.map.mapper.UserMapper;
+import com.map.utils.PhoneUtil;
 import com.map.web.model.ResultBuilder;
 import com.map.web.model.ResultModel;
 import com.map.web.service.UserService;
@@ -23,14 +25,18 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserMapper userMapper;
 
-    public ResultModel register(User user) {
+    public ResultModel register(User user,String code) {
         user.setType("user");
         // 账号没被注册过
         if (userMapper.findUserByAccount(user.getAccount()) == null) {
             logger.info(user);
             user.setType("user");
             try {
-                userMapper.saveUser(user);
+                if (PhoneUtil.judgeCodeIsTrue(code,user.getAccount())) {
+                    userMapper.saveUser(user);
+                }else {
+                    return ResultBuilder.getFailure(3, "手机验证码错误");
+                }
             } catch (Exception e) {
                 return ResultBuilder.getFailure(2, "未知错误");
             }
@@ -65,6 +71,8 @@ public class UserServiceImpl implements UserService {
             return ResultBuilder.getFailure(2, "密码错误");
         }
     }
+
+
 
     public ResultModel getUserMessageById(int userId) {
         User user = userMapper.findUserById(userId);
@@ -111,6 +119,15 @@ public class UserServiceImpl implements UserService {
             return ResultBuilder.getFailure(2, "用户信息更新失败");
         }
         return ResultBuilder.getSuccess("用户信息更新成功");
+    }
+
+    @Override
+    public ResultModel changePass(ChangePassword newpass) {
+        if (userMapper.changePass(newpass)) {
+            return ResultBuilder.getSuccess("修改成功");
+        }else {
+            return ResultBuilder.getFailure(-2,"jdbc修改失败");
+        }
     }
 
     @Override

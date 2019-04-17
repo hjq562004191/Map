@@ -4,8 +4,6 @@ package com.map.web.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.map.converter.ImageConverter;
-import com.map.utils.FileUtil;
 import com.map.utils.QiniuCloudUtil;
 import com.map.web.View.SimpleView;
 import com.map.web.model.ImageMessage;
@@ -17,17 +15,13 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import com.map.web.model.VideoMessage;
@@ -106,7 +100,7 @@ public class FileUploadController {
             fileMessage.setTitle(null);
         fileMessage.setUrl(path);
         ObjectMapper objectMapper = new ObjectMapper();
-        String content = null;
+        String content;
 //        if (type == 3)
             content = objectMapper.writeValueAsString(fileMessage);
         return informationService.addInformation(pointId, type, userId, content);

@@ -1,6 +1,7 @@
 package com.map.mapper;
 
 
+import com.map.domain.ChangePassword;
 import com.map.domain.User;
 import com.map.web.model.UserModel;
 import org.apache.ibatis.annotations.*;
@@ -9,6 +10,9 @@ import java.net.URL;
 import java.util.List;
 
 public interface UserMapper {
+
+    @Update("update map_user SET password=#{password} where account=#{account}")
+    boolean changePass(ChangePassword newpass);
 
     @Select("select password from map_user where account = #{account}")
     String findPasswordByAccount(String account);

@@ -3,6 +3,7 @@ package com.map.web.controller;
 import com.auth0.jwt.interfaces.Claim;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.github.pagehelper.PageInfo;
+import com.map.domain.ChangePassword;
 import com.map.domain.User;
 import com.map.utils.JWTUtils;
 import com.map.utils.PhoneUtil;
@@ -11,6 +12,8 @@ import com.map.web.View.SimpleView;
 import com.map.web.model.ResultBuilder;
 import com.map.web.model.ResultModel;
 import com.map.web.service.UserService;
+import jdk.nashorn.internal.ir.RuntimeNode;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -21,6 +24,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -34,7 +38,8 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @RequestMapping(value = "/user/getphonecode",method = POST)
+
+    @RequestMapping(value = "/user/getphonecode", method = POST)
     public  ResultModel getphonecode(String phonenumber) {
         String code = null;
         code = PhoneUtil.getVerificationCode(phonenumber);
@@ -44,7 +49,8 @@ public class UserController {
         return ResultBuilder.getSuccess(code,"获取成功!");
     }
 
-    @RequestMapping(value = "/user/judgephone",method = POST)
+
+    @RequestMapping(value = "/user/judgephone" , method = POST)
     public  ResultModel phoneNumberJudge(String code,String phonenumber){
         if (PhoneUtil.judgeCodeIsTrue(code,phonenumber)){
             return ResultBuilder.getSuccess("验证成功!");
@@ -52,8 +58,18 @@ public class UserController {
         return ResultBuilder.getFailure(-1,"验证失败!");
     }
 
+    @RequestMapping(value = "/user/changepassword" , method = POST)
+    public ResultModel changepassbyphone( String account, @Valid ChangePassword newpass){
+        if (newpass.getPassword().equals(newpass.getSedpassword())){
+            newpass.setAccount(account);
+            return userService.changePass(newpass);
+        }else {
+            return ResultBuilder.getFailure(-1,"输入的两次密码不同");
+        }
+    }
+
     @RequestMapping(value = "/user/register", method = POST)
-    public ResultModel register(@Valid User user, BindingResult bindingResult) {
+    public ResultModel register(@Valid User user,String code, BindingResult bindingResult) {
         // 如果注册的信息有问题
         if (bindingResult.hasErrors()) {
             List<ObjectError> errors = bindingResult.getAllErrors();
@@ -63,7 +79,7 @@ public class UserController {
                 return ResultBuilder.getFailure(-1, message + ":" + fieldError.getDefaultMessage());
             }
         }
-        return userService.register(user);
+        return userService.register(user,code);
     }
 
 

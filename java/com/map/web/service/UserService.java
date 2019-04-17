@@ -1,6 +1,7 @@
 package com.map.web.service;
 
 import com.github.pagehelper.PageInfo;
+import com.map.domain.ChangePassword;
 import com.map.domain.User;
 import com.map.web.model.ResultModel;
 
@@ -8,7 +9,7 @@ import java.util.List;
 
 
 public interface UserService {
-    ResultModel register(User user);
+    ResultModel register(User user,String code);
 
     ResultModel login(String account, String password) throws Exception;
 
@@ -23,6 +24,8 @@ public interface UserService {
     PageInfo<User> getUsers(int pageNo, int pageSize);
 
     ResultModel updateUser(User user);
+
+    ResultModel changePass(ChangePassword newpass);
 
     ResultModel deleteUser(int userId);
 
