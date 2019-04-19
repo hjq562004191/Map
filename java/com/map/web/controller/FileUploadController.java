@@ -4,6 +4,7 @@ package com.map.web.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.map.utils.FileUtil;
 import com.map.utils.QiniuCloudUtil;
 import com.map.web.View.SimpleView;
 import com.map.web.model.ImageMessage;
@@ -15,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import com.map.web.model.VideoMessage;
@@ -134,66 +137,58 @@ public class FileUploadController {
         return userService.saveIcon(userId, path);
     }
 
-//    @PostMapping("/uploadMangPhotos/{pointId:\\d+}")
-//    public ResultModel uploadMangPicture(@PathVariable int pointId, String title,
-//                                         MultipartHttpServletRequest request) throws IOException {
-//        Integer userId = (Integer) request.getAttribute("id");
-//        List<MultipartFile> photos = request.getFiles("file");
-//        if (photos.isEmpty()) {
-//            return ResultBuilder.getFailure(1, "文件内容为空");
-//        }
-//
-//        for (MultipartFile file : photos) {
-//            ResultModel resultModel = isFileNull(file);
-//            if (resultModel != null) {
-//                return resultModel;
-//            }
-//        }
-//        String paths[] = new String[photos.size()];
-//        String parentPath = getParentPath();
-//
-//        File parentFile = new File(parentPath, "/photo");
-//        if (!parentFile.exists()) {
-//            parentFile.mkdir();
-//        }
-//        int count = 0;
-//
-//        for (MultipartFile file : photos) {
-//
-//            String fileRandomName = getRandomFileName();
-//            String suffix = FileUtil.getMultiPartSuffix(file);
-//            paths[count] = "/photo/" + fileRandomName + suffix;
-////            try {
-//////                ImageConverter.imageConverter(parentPath, fileRandomName, file.getInputStream());
-////            } catch (IOException e) {
-////                logger.info("文件上传出错");
-////                e.printStackTrace();
-////                return ResultBuilder.getFailure(2, "文件上传出错");
-////            }
-//            File realfile = new File(parentFile,fileRandomName+suffix);
-//            try {
-//                file.transferTo(realfile);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            count++;
-//        }
-//        ImageMessage imageMessage = new ImageMessage();
-//
-//        imageMessage.setTitle(title);
-//        imageMessage.setUrls(paths);
-//        return informationService.addMangPhotosMessage(userId, pointId, imageMessage);
-//    }
+    @PostMapping("/uploadPhotos/{pointId:\\d+}")
+    public ResultModel uploadMangPicture(@PathVariable int pointId, String title,
+                                         MultipartHttpServletRequest request) throws IOException {
+        Integer userId = (Integer) request.getAttribute("id");
+        List<MultipartFile> photos = request.getFiles("file");
+        if (photos.isEmpty()) {
+            return ResultBuilder.getFailure(1, "文件内容为空");
+        }
+
+        for (MultipartFile file : photos) {
+            ResultModel resultModel = isFileNull(file);
+            if (resultModel != null) {
+                return resultModel;
+            }
+        }
+        String paths[] = new String[photos.size()];
+        String parentPath = getParentPath();
+
+        File parentFile = new File(parentPath, "/photo");
+        if (!parentFile.exists()) {
+            parentFile.mkdir();
+        }
+        int count = 0;
+
+        for (MultipartFile file : photos) {
+
+            String fileRandomName = getRandomFileName();
+            String suffix = FileUtil.getMultiPartSuffix(file);
+            paths[count] = "/photo/" + fileRandomName + suffix;
+            File realfile = new File(parentFile,fileRandomName+suffix);
+            try {
+                file.transferTo(realfile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            count++;
+        }
+        ImageMessage imageMessage = new ImageMessage();
+
+        imageMessage.setTitle(title);
+        imageMessage.setUrls(paths);
+        return informationService.addMangPhotosMessage(userId, pointId, imageMessage);
+    }
 
 
     @ResponseBody
-    @RequestMapping(value="/qiniuupload/{pointId:\\d+}", method=RequestMethod.POST)
-    public ResultModel uploadImg(@PathVariable int pointId, String title,
-            @RequestParam MultipartFile image, HttpServletRequest request) {
+    @RequestMapping(value="/qiniuupload", method=RequestMethod.POST)
+    public ResultModel uploadImg(@RequestParam MultipartFile image, HttpServletRequest request) {
         Integer userId = (Integer) request.getAttribute("id");
         String url = null;
         if (image.isEmpty()) {
-            return ResultBuilder.getFailure(1,"文件内容为空");
+            return ResultBuilder.getFailure(1,"头像为空");
         }
 
         try {
@@ -208,14 +203,11 @@ public class FileUploadController {
                 e.printStackTrace();
             }
         } catch (IOException e) {
-            return ResultBuilder.getFailure(-1,"文件上传七牛云发生异常！");
+            return ResultBuilder.getFailure(-1,"头像上传七牛云发生异常！");
         }
 //        return ResultBuilder.getSuccess(url,"上传成功");
         ImageMessage imageMessage = new ImageMessage();
-
-        imageMessage.setTitle(title);
-        imageMessage.setUrls(url);
-        return informationService.addMangPhotosMessage(userId, pointId, imageMessage);
+        return informationService.addtouxiang(userId,url);
     }
 
 //    @PostMapping("/uploadMangPhotos/{pointId:\\d+}")
