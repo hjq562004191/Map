@@ -58,7 +58,7 @@ public class UserController {
         return ResultBuilder.getFailure(-1,"验证失败!");
     }
 
-    @RequestMapping(value = "/user/changepassword" , method = POST)
+    @RequestMapping(value = "/changepassword" , method = POST)
     public ResultModel changepassbyphone( String account, @Valid ChangePassword newpass){
         if (newpass.getPassword().equals(newpass.getSedpassword())){
             newpass.setAccount(account);
@@ -109,7 +109,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/admin/userlock/{userId:\\d+}")
+    @RequestMapping(value = "/admin/userlock/{userId:\\d+00}")
     public ResultModel lockUser(@PathVariable int userId) {
         return userService.lockedUser(userId);
     }
